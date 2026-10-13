@@ -1,0 +1,41 @@
+services:
+  ml-trainer-local:
+    build:
+      context: ./node_b
+      dockerfile: Dockerfile.local
+    container_name: ml-trainer-local
+    environment:
+      DATA_PATH: /home/DATA/clean_data.csv
+      TARGET_COLUMN: species
+      TEST_SIZE: "0.2"
+      RANDOM_STATE: "42"
+    volumes:
+      - local_b_data:/home/DATA
+      - ./.local-docker/server:/run/local-ssh:ro
+    ports:
+      - "127.0.0.1:5000:5000"
+
+  data-processor-local:
+    build:
+      context: ./node_a
+    container_name: data-processor-local
+    environment:
+      DATA_DIR: /home/DATA
+      RAW_DATA_PATH: /home/DATA/raw_data.csv
+      CLEAN_DATA_PATH: /home/DATA/clean_data.csv
+      NODE_B_HOST: ml-trainer-local
+      NODE_B_USER: lab
+      NODE_B_DATA_DIR: /home/DATA
+      SSH_PORT: "22"
+      SSH_KEY_PATH: /run/ssh/id_ed25519
+      SSH_KNOWN_HOSTS: /run/ssh/known_hosts
+      TARGET_COLUMN: species
+      USE_IRIS_FALLBACK: "true"
+    volumes:
+      - ./node_a/data:/home/DATA
+      - ./.local-docker/client:/run/ssh:ro
+    depends_on:
+      - ml-trainer-local
+
+volumes:
+  local_b_data:

@@ -1,0 +1,8 @@
+.env
+**/.env
+.local-docker/
+__pycache__/
+*.py[cod]
+node_a/data/*.csv
+node_b/data/*.csv
+!.gitkeep

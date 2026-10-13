@@ -1,0 +1,15 @@
+services:
+  ml-trainer:
+    build: .
+    container_name: ml-trainer
+    env_file: .env
+    environment:
+      DATA_PATH: /home/DATA/clean_data.csv
+      TARGET_COLUMN: ${TARGET_COLUMN:-species}
+      TEST_SIZE: ${TEST_SIZE:-0.2}
+      RANDOM_STATE: ${RANDOM_STATE:-42}
+    volumes:
+      - ./data:/home/DATA:ro
+    ports:
+      - "5000:5000"
+    restart: unless-stopped

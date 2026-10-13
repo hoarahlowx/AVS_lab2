@@ -1,0 +1,20 @@
+FROM python:3.9-slim
+
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends openssh-server supervisor passwd \
+    && useradd --create-home --shell /bin/sh lab \
+    && passwd -d lab \
+    && mkdir -p /run/sshd /home/DATA \
+    && chown lab:lab /home/DATA \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+COPY requirements.txt /app/requirements.txt
+RUN pip install --no-cache-dir -r /app/requirements.txt
+COPY ml_service.py /app/ml_service.py
+COPY sshd_config.local /etc/ssh/sshd_config.local
+COPY local_entrypoint.sh /app/local_entrypoint.sh
+COPY supervisord.local.conf /etc/supervisor/conf.d/supervisord.local.conf
+
+EXPOSE 22 5000
+CMD ["sh", "/app/local_entrypoint.sh"]
