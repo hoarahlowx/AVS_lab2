@@ -1,0 +1,22 @@
+{
+  "name": "AVS Lab 2 - Debian",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+  "features": {
+    "ghcr.io/devcontainers/features/docker-in-docker:4": {
+      "moby": true,
+      "dockerDashComposeVersion": "v2"
+    }
+  },
+  "appPort": ["2222:22", "5000:5000"],
+  "postStartCommand": "sudo ssh-keygen -A && sudo service ssh start",
+  "remoteUser": "vscode",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-azuretools.vscode-containers"
+      ]
+    }
+  }
+}

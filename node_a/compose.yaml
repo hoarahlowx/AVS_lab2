@@ -7,16 +7,9 @@ services:
       DATA_DIR: /home/DATA
       RAW_DATA_PATH: /home/DATA/raw_data.csv
       CLEAN_DATA_PATH: /home/DATA/clean_data.csv
-      SSH_KEY_PATH: /tmp/ssh/${SSH_KEY_FILE:-lab2_ed25519}
+      SSH_KEY_PATH: /run/ssh/${SSH_KEY_FILE:-lab2_ed25519}
       SSH_KNOWN_HOSTS: /run/ssh/known_hosts
     volumes:
       - ./data:/home/DATA
-      - type: bind
-        source: ${SSH_DIR:?Set SSH_DIR in node_a/.env}
-        target: /run/ssh
-        read_only: true
-    command:
-      - sh
-      - -c
-      - mkdir -p /tmp/ssh && install -m 600 /run/ssh/${SSH_KEY_FILE:-lab2_ed25519} /tmp/ssh/${SSH_KEY_FILE:-lab2_ed25519} && exec sleep infinity
+      - ${SSH_DIR:?Set SSH_DIR in node_a/.env}:/run/ssh:ro
     restart: unless-stopped
